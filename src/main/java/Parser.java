@@ -39,7 +39,7 @@ public class Parser {
                 System.out.println(express[i] + " is an Operator!");
 
                 if (express[i] == '(') {
-                    System.out.println("pushnodeing " + express[i] + " on the stack");
+                    System.out.println("pushing node " + express[i] + " on the stack");
                     Operatorobj pnodeo = new Operatorobj(express[i], -99);
                     operatorStack.pushnode(pnodeo);
                 } else if (express[i] == ')' && !operatorStack.staclEmpty()) {
@@ -54,7 +54,7 @@ public class Parser {
                     oprior = findVal(express[i], operators, operatorsValue);
                     System.out.println("peeking at top of the stack" + (operatorStack.peeknode().priority));
                     while (oprior <= (operatorStack.peeknode().priority)) {                                      /// getting an error with operatorStack.peeknode() when stack is 0 trying to peek at number-1
-                        popEvalueAndpushnode(operatorStack, operandStack);
+                        popEvalueAndpushnode(operatorStack, operandStack);                                       // something in this logic is broken... or something isnt getting added to the stack when it should be
                     }
                         System.out.println("pushnodeing Operator " + express[i] + " with Priority " + oprior);
                         Operatorobj pnodeo = new Operatorobj(express[i], oprior);
@@ -95,11 +95,12 @@ public static int IntEval(int oper1, char oper, int oper2) { // start of IntEval
             if (oper2 == 0) {
                 return 1;
             } else {
-                int temp = 0;
-                for (int i = 0; i < oper2; i++) {
-                    temp = temp + oper1;
-                }
-                result = temp;
+               int base = oper1;
+               int exponent = oper2;
+               while(exponent != 0){
+                   result *=base;
+                   --exponent;
+               }
                 System.out.println(oper1 + "^" + oper2 + " = " + result);
                 return result;
             }
