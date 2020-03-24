@@ -5,8 +5,8 @@ public class Parser {
     GenericManagerStacks<Integer> operandStack = new GenericManagerStacks<Integer>();
     char[] operands = {'A','B','C','D','E','F','0','1','2','3','4','5','6','7','8','9'};
     int [] operandsValue = {8,12,2,3,15,4,0,1,2,3,4,5,6,7,8,9};
-    char[] operators= {'@','*','/','+','-',')','(','#'};
-    int [] operatorsValue = {3,2,2,1,1,99,-99,-100};
+    char[] operators= {'@','*','/','+','-',')','(','%','#'};
+    int [] operatorsValue = {3,2,2,1,1,99,-99,2,-100};
 
 
 
@@ -116,6 +116,10 @@ public static int IntEval(int oper1, char oper, int oper2) { // start of IntEval
         case '*':
             result = oper1 * oper2;
             System.out.println(oper1 + " * " + oper2 + " = " + result);
+            return result;
+        case '%':
+            result = oper1 % oper2;
+            System.out.println(oper1 + " % " + oper2 + " = " + result);
             return result;
 
         case '/':
