@@ -1,9 +1,9 @@
 import java.util.LinkedList;
 
 public class Parser {
-    LinkedList<Operatorobj> operatorStack = new LinkedList<Operatorobj>();
-    LinkedList<Integer> operandStack = new LinkedList<Integer>();
-    char[] operands = {'A','B','C','D','E','F',0,1,2,3,4,5,6,7,8,9};
+    GenericManagerStacks<Operatorobj> operatorStack = new GenericManagerStacks<Operatorobj>();
+    GenericManagerStacks<Integer> operandStack = new GenericManagerStacks<Integer>();
+    char[] operands = {'A','B','C','D','E','F','0','1','2','3','4','5','6','7','8','9'};
     int [] operandsValue = {8,12,2,3,15,4,0,1,2,3,4,5,6,7,8,9};
     char[] operators= {'@','*','/','+','-',')','(','#'};
     int [] operatorsValue = {3,2,2,1,1,99,-99,-100};
@@ -11,113 +11,127 @@ public class Parser {
 
 
     Parser(String equation){
-        char[] equationChars = equation.toCharArray();
+        char[] express = equation.toCharArray();
 
-        System.out.println("pushing # on operand Stack with value " +findVal('#',operators,operatorsValue));
+        //System.out.println("pushnodeing # on operand Stack with value " +findVal('#',operators,operatorsValue));
         // will throw out of Bounds if not in array... I know it will be in there every time - Ronnie
         Operatorobj operator = new Operatorobj('#',findVal('#',operators,operatorsValue));
-        operatorStack.push(operator);
+        operatorStack.pushnode(operator);
 
-        int exValue,tempValue,oprior;
-        for (int i = 0; i <equationChars.length ; i++) {
-            System.out.println("Parsing " + equationChars[i]);
-            if(equationChars[i]=='#'){
-                while(operatorStack.peekFirst().operator!='#'){
-                    popEvalueAndPush(operatorStack,operandStack);
-                }
-                exValue = operandStack.pop();
-                System.out.println("The Value for this expression is " + exValue +" !!!");
-            }
+        int exValue,ivalu,oprior;
+        int i = 0;
 
-            if(((equationChars[i]>='0') &&(equationChars[i]<='9')) || ((equationChars[i]>= 'A') && (equationChars[i]<='Z'))){ // if its an operand
-                System.out.println(equationChars[i] + " is an Operand!");
-                tempValue = findVal(equationChars[i],operands,operandsValue);
-                if(tempValue==-99){
-                    System.out.println("no value in table for " + equationChars[i]);
+        while (express[i]!= '#'){
+            System.out.println("Parsing " + express[i]);
+
+
+
+            if(((express[i]>='0') &&(express[i]<='9')) || ((express[i]>= 'A') && (express[i]<='Z'))){ // if its an operand
+                System.out.println(express[i] + " is an Operand!");
+                ivalu = findVal(express[i],operands,operandsValue);
+                if(ivalu==-99){
+                    System.out.println("no value in table for " + express[i]);
                 }
-                System.out.println("Pushing " + equationChars[i] + " on the stack");
-                operandStack.push(tempValue);
+                System.out.println("pushing node " + express[i] + " on the stack");
+                operandStack.pushnode(ivalu);
             }
             else { // its and operator
-                System.out.println(equationChars[i] + " is an Operator!");
-                if(equationChars[i]=='('){
-                    System.out.println("Pushing " + equationChars[i] + " on the stack");
-                    Operatorobj pnodeo = new Operatorobj(equationChars[i],-99);
-                    operatorStack.push(pnodeo);
-                }
-                else {
-                    if(equationChars[i]==')'){
-                        while((operatorStack.peekFirst().operator!='(')){
-                            popEvalueAndPush(operatorStack,operandStack);
-                            operatorStack.pop();
-                        }
+                System.out.println(express[i] + " is an Operator!");
+
+                if (express[i] == '(') {
+                    System.out.println("pushnodeing " + express[i] + " on the stack");
+                    Operatorobj pnodeo = new Operatorobj(express[i], -99);
+                    operatorStack.pushnode(pnodeo);
+                } else if (express[i] == ')' && !operatorStack.staclEmpty()) {
+                    while (( operatorStack.peeknode().operator != '(') ) {
+                        popEvalueAndpushnode(operatorStack, operandStack);
+
+                        operatorStack.popnode();
                     }
-                    else { // not a ( or a )
-                        oprior = findVal(equationChars[i],operators,operatorsValue);
-                        System.out.println("peeking at top of the stack" + (operatorStack.peekFirst().priority));
-                        while(oprior<=(operatorStack.peekFirst().priority)){
-                            popEvalueAndPush(operatorStack,operandStack);
-                            System.out.println("pushing Operator " +equationChars[i] + " with Priority " + oprior);
-                            Operatorobj pnodeo = new Operatorobj(equationChars[i],oprior);
-                            operatorStack.push(pnodeo);
-                        }
+                } // end of this is right parenthesis
+                else { // not a ( or a )
+                    System.out.println("DEBUG: "+express[i]);
+                    oprior = findVal(express[i], operators, operatorsValue);
+                    System.out.println("peeking at top of the stack" + (operatorStack.peeknode().priority));
+                    while (oprior <= (operatorStack.peeknode().priority)) {                                      /// getting an error with operatorStack.peeknode() when stack is 0 trying to peek at number-1
+                        popEvalueAndpushnode(operatorStack, operandStack);
                     }
-                }
-            }
+                        System.out.println("pushnodeing Operator " + express[i] + " with Priority " + oprior);
+                        Operatorobj pnodeo = new Operatorobj(express[i], oprior);
+                        operatorStack.pushnode(pnodeo);
+
+
+                } // end of is not a ( or )
+            }// end of operator stack
+
+                i++;
+
+        } // end of while express loop
+        while((operatorStack.peeknode()).operator!='#') {
+            popEvalueAndpushnode(operatorStack, operandStack);
         }
-        while((operatorStack.peekFirst()).operator!='#'){
-            popEvalueAndPush(operatorStack,operandStack);
-            exValue = operandStack.pop();
-            System.out.println("THe value for this expression is " + exValue);
-        }
+            exValue = operandStack.popnode();
+            System.out.println("The value for this expression is " + exValue);
+
     }
 
-public static void popEvalueAndPush(LinkedList<Operatorobj> x,LinkedList<Integer> y){ // start of popEvalueAndPush
+public static void popEvalueAndpushnode(GenericManagerStacks<Operatorobj> x,GenericManagerStacks<Integer> y){ // start of popEvalueAndpushnode
         int a,b,c;
         char operandx;
-        operandx = (x.pop().getOperator());
-        a=y.pop();
-        b=y.pop();
+        operandx = (x.popnode().getOperator());
+        a=y.popnode();
+        b=y.popnode();
         System.out.println("in pop Evaluate " + b + operandx + a);
         c = IntEval(b,operandx,a);
-        y.push(c);
+        y.pushnode(c);
         return;
-} // end of popEvalueAndPush
+} // end of popEvalueAndpushnode
 
-public static int IntEval(int oper1, char oper, int oper2){ // start of IntEval Method
-    int result = -99;
-        switch(oper){
-            case '@' :
-                if(oper2 == 0){
-                    result = 1;
+public static int IntEval(int oper1, char oper, int oper2) { // start of IntEval Method
+
+    int result = 0;
+    switch (oper) {
+        case '@':
+            if (oper2 == 0) {
+                return 1;
+            } else {
+                int temp = 0;
+                for (int i = 0; i < oper2; i++) {
+                    temp = temp + oper1;
                 }
-                else {
-                    result = oper1;
-                    for (int i = 0; i < oper2; i++) {
-                        result = result + oper1;
-                    }
-                    System.out.println(oper1 + "^" + oper2 +" = " + result);
-                }
-            case '+' :
-                result = oper1 + oper2;
-                System.out.println(oper1 + " + " + oper2 +" = " + result);
-            case '-' :
-                result = oper1 - oper2;
-                System.out.println(oper1 + " - " + oper2 +" = " + result);
-            case '*' :
-                result = oper1 * oper2;
-                System.out.println(oper1 + " * " + oper2 +" = " + result);
-            case '/' :
-                if(oper1 != 0){
-                    result = oper1/oper2;
-                    System.out.println(oper1 +"/" + oper2 +" = "+result);
-                }
-                else {
-                    System.out.println("Divide by 0 not allowed!!");
-                    return -99;
-                }
-        }
-        return result;
+                result = temp;
+                System.out.println(oper1 + "^" + oper2 + " = " + result);
+                return result;
+            }
+        case '+':
+            result = oper1 + oper2;
+            System.out.println(oper1 + " + " + oper2 + " = " + result);
+            return result;
+
+        case '-':
+            result = oper1 - oper2;
+            System.out.println(oper1 + " - " + oper2 + " = " + result);
+            return result;
+
+        case '*':
+            result = oper1 * oper2;
+            System.out.println(oper1 + " * " + oper2 + " = " + result);
+            return result;
+
+        case '/':
+            if (oper2 != 0) {
+                result = oper1 / oper2;
+                System.out.println(oper1 + "/" + oper2 + " = " + result);
+
+              return result;
+
+            } else {
+                System.out.println("Divide by 0 not allowed!!");
+                return -99;
+
+            }
+    }
+    return result;
 } // end of IntEval method
 
 
