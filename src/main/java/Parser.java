@@ -46,8 +46,8 @@ public class Parser {
                     while (( operatorStack.peeknode().operator != '(') ) {
                         popEvalueAndpushnode(operatorStack, operandStack);
 
-                        operatorStack.popnode();
                     }
+                    operatorStack.popnode();
                 } // end of this is right parenthesis
                 else { // not a ( or a )
                     System.out.println("DEBUG: "+express[i]);
@@ -56,26 +56,24 @@ public class Parser {
                     while (oprior <= (operatorStack.peeknode().priority)) {                                      /// getting an error with operatorStack.peeknode() when stack is 0 trying to peek at number-1
                         popEvalueAndpushnode(operatorStack, operandStack);                                       // something in this logic is broken... or something isnt getting added to the stack when it should be
                     }
-                        System.out.println("pushnodeing Operator " + express[i] + " with Priority " + oprior);
-                        Operatorobj pnodeo = new Operatorobj(express[i], oprior);
-                        operatorStack.pushnode(pnodeo);
-
-
+                    System.out.println("pushnodeing Operator " + express[i] + " with Priority " + oprior);
+                    Operatorobj pnodeo = new Operatorobj(express[i], oprior);
+                    operatorStack.pushnode(pnodeo);
                 } // end of is not a ( or )
             }// end of operator stack
 
-                i++;
+            i++;
 
         } // end of while express loop
         while((operatorStack.peeknode()).operator!='#') {
             popEvalueAndpushnode(operatorStack, operandStack);
         }
-            exValue = operandStack.popnode();
-            System.out.println("The value for this expression is " + exValue);
+        exValue = operandStack.popnode();
+        System.out.println("The value for this expression is " + exValue);
 
     }
 
-public static void popEvalueAndpushnode(GenericManagerStacks<Operatorobj> x,GenericManagerStacks<Integer> y){ // start of popEvalueAndpushnode
+    public static void popEvalueAndpushnode(GenericManagerStacks<Operatorobj> x,GenericManagerStacks<Integer> y){ // start of popEvalueAndpushnode
         int a,b,c;
         char operandx;
         operandx = (x.popnode().getOperator());
@@ -85,59 +83,59 @@ public static void popEvalueAndpushnode(GenericManagerStacks<Operatorobj> x,Gene
         c = IntEval(b,operandx,a);
         y.pushnode(c);
         return;
-} // end of popEvalueAndpushnode
+    } // end of popEvalueAndpushnode
 
-public static int IntEval(int oper1, char oper, int oper2) { // start of IntEval Method
+    public static int IntEval(int oper1, char oper, int oper2) { // start of IntEval Method
 
-    int result = 0;
-    switch (oper) {
-        case '@':
-            if (oper2 == 0) {
-                return 1;
-            } else {
-               int base = oper1;
-               int exponent = oper2;
-               while(exponent != 0){
-                   result *=base;
-                   --exponent;
-               }
-                System.out.println(oper1 + "^" + oper2 + " = " + result);
+        int result = 0;
+        switch (oper) {
+            case '@':
+                if (oper2 == 0) {
+                    result = 1;
+                    return result;
+                } else {
+                    result = oper1;
+                    for(int i=1; i < oper2; i++){
+                        result = result * oper1;
+                    }
+
+                    System.out.println(oper1 + "^" + oper2 + " = " + result);
+                    return result;
+                }
+            case '+':
+                result = oper1 + oper2;
+                System.out.println(oper1 + " + " + oper2 + " = " + result);
                 return result;
-            }
-        case '+':
-            result = oper1 + oper2;
-            System.out.println(oper1 + " + " + oper2 + " = " + result);
-            return result;
 
-        case '-':
-            result = oper1 - oper2;
-            System.out.println(oper1 + " - " + oper2 + " = " + result);
-            return result;
+            case '-':
+                result = oper1 - oper2;
+                System.out.println(oper1 + " - " + oper2 + " = " + result);
+                return result;
 
-        case '*':
-            result = oper1 * oper2;
-            System.out.println(oper1 + " * " + oper2 + " = " + result);
-            return result;
-        case '%':
-            result = oper1 % oper2;
-            System.out.println(oper1 + " % " + oper2 + " = " + result);
-            return result;
+            case '*':
+                result = oper1 * oper2;
+                System.out.println(oper1 + " * " + oper2 + " = " + result);
+                return result;
+            case '%':
+                result = oper1 % oper2;
+                System.out.println(oper1 + " % " + oper2 + " = " + result);
+                return result;
 
-        case '/':
-            if (oper2 != 0) {
-                result = oper1 / oper2;
-                System.out.println(oper1 + "/" + oper2 + " = " + result);
+            case '/':
+                if (oper2 != 0) {
+                    result = oper1 / oper2;
+                    System.out.println(oper1 + "/" + oper2 + " = " + result);
 
-              return result;
+                    return result;
 
-            } else {
-                System.out.println("Divide by 0 not allowed!!");
-                return -99;
+                } else {
+                    System.out.println("Divide by 0 not allowed!!");
+                    return -99;
 
-            }
-    }
-    return result;
-} // end of IntEval method
+                }
+        }
+        return result;
+    } // end of IntEval method
 
 
     public int findVal(char c, char [] keyTable, int [] valueTable) { // start of findVal method
