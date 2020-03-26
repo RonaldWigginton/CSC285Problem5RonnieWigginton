@@ -1,6 +1,6 @@
-public class Operatorobj {
-    protected char operator;
-    protected int priority;
+public class Operatorobj { // operator obj Class
+    protected char operator; // char for oper
+    protected int priority; // priority in order of operations
 
     public Operatorobj(char opert, int pri){
         this.operator = opert;
@@ -9,9 +9,9 @@ public class Operatorobj {
 
     public int getPriority() {
         return priority;
-    }
+    } // returns the priority
 
-    public char getOperator() {
+    public char getOperator() { // returns our operator
         return operator;
     }
 } // end of OperatorobjClass
